@@ -5,19 +5,19 @@ import support.DatabaseSupport;
 
 import java.util.List;
 
-public class CountTablesInSchema implements ScriptRunner {
+public class CountTableRowsInSchema implements ScriptRunner {
   private final static String SCHEMA_NAME = "dev";
 
   @Override
   public void run() {
-    long sourceCount = DatabaseSupport.withSourceDatabase(this::countAllTablesInSchema);
+    long sourceCount = DatabaseSupport.withSourceDatabase(this::countAllTableRowsInSchema);
     System.out.println("The source database has " + sourceCount + " table(s) in schema " + SCHEMA_NAME);
-    long replicaCount = DatabaseSupport.withReplicaDatabase(this::countAllTablesInSchema);
+    long replicaCount = DatabaseSupport.withReplicaDatabase(this::countAllTableRowsInSchema);
     System.out.println("The replica database has " + replicaCount + " table(s) in schema " + SCHEMA_NAME);
     assert sourceCount == replicaCount;
   }
 
-  private long countAllTablesInSchema(Jdbi jdbi) {
+  private long countAllTableRowsInSchema(Jdbi jdbi) {
     return jdbi.withHandle(handle -> {
       List<String> tableNames = handle.createQuery(
               "SELECT table_name FROM information_schema.tables WHERE table_schema = '" + SCHEMA_NAME + "'")
